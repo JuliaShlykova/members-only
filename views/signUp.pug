@@ -1,0 +1,25 @@
+extends index 
+
+block form 
+  div.container
+    div.form-container
+      p Already have an account? 
+        a(href='/log-in') Log In
+      form(action="" method="POST")
+        label(for="first-name") First Name: 
+        input#first-name(type="text" value=(user===undefined)?"":user.first_name name="first_name" required=true maxLength=40)
+        label(for="first-name") Last Name: 
+        input#last-name(type="text" value=(user===undefined)?"":user.last_name name="last_name" required=true maxLength=40)
+        label(for="email") Email: 
+        input#email(type="email" value=(user===undefined)?"":user.email name="email" required=true maxLength=254)
+        label(for="password") Password: 
+        input#password(type="password" value=(user===undefined)?"":user.password name="password" required=true)
+        label(for="confirm-password") Confirm Password: 
+        input#confirm-password(type="password" value=(user===undefined)?"":user.confirm_password name="confirm_password" required=true)
+        button(type="submit") Sign Up
+      if errors 
+        ul#errors 
+          for error in errors 
+            li 
+              p *#{error.msg}
+      a(href='/') Cancel

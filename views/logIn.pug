@@ -1,0 +1,14 @@
+extends index 
+
+block form 
+  div.container
+    div.form-container
+      p Don't have an account? 
+        a(href='/sign-up') Sign Up
+      form(action="" method="POST")
+        label(for="email") Email: 
+        input#email(type="email" value=(user===undefined)?"":user.email name="email" required=true maxLength=254)
+        label(for="password") Password: 
+        input#password(type="password" value=(user===undefined)?"":user.password name="password" required=true)
+        button(type="submit") Log In
+      a(href='/') Cancel

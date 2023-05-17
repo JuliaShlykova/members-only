@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1 Messages 
+  if currentUser 
+    p Welcome, #{currentUser.first_name+' '+currentUser.last_name}!
+  else 
+    p Welcome!
+  
+  block form

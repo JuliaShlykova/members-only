@@ -1,3 +1,17 @@
-extends index 
+extends layout 
 
-block form
+block content
+  div.container
+    div.form-container
+      form(action="", method="POST")
+        label(for="msg-title") Title: 
+        input#msg-title(type="text" value=(message===undefined)?"":message.title name="msg_title" required="true")
+        label(for="msg-text") Text: 
+        textarea#msg-text(type="textarea" name="msg_text" required="true") #{(message===undefined)?"":message.text}
+        button(type="submit") Create New Post
+      if errors 
+        ul#errors 
+          for error in errors 
+            li 
+              p *#{error.msg}
+      a(href='/') Cancel

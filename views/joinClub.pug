@@ -1,0 +1,10 @@
+extends layout 
+
+block content 
+  h1 Join The Club! 
+  if wrongWord 
+    p #{wrongWord} is not the secret code!
+  form(method="POST" action="" autocomplete="off")
+    label(for="secret-code") Enter Secret Code: 
+    input#secret-code(type="text" value="" name="secret_code" required=true )
+    button(type="submit") Submit

@@ -6,7 +6,8 @@ html
   body
     nav 
       div#logo
-        p MembersOnly
+        p 
+          a(href='/') MembersOnly
       ul
         if currentUser
           if !currentUser.membership

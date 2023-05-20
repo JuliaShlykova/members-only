@@ -3,8 +3,21 @@ extends layout
 block content
   h1 Messages 
   if currentUser 
-    p Welcome, #{currentUser.first_name+' '+currentUser.last_name}!
+    if currentUser.membership 
+      p Welcome back, dear member #{currentUser.first_name+' '+currentUser.last_name}!
+    else
+      p Welcome, #{currentUser.first_name+' '+currentUser.last_name}!
   else 
     p Welcome!
-  
-  block form
+  for msg in messages
+    div.message
+      if currentUser&&currentUser.membership 
+        p #{msg.user.first_name+' '+msg.user.last_name}
+        h2=msg.title
+        p=msg.text
+        p #{msg.format_timestamp}
+      else
+        p Hidden
+        h2=msg.title
+        p=msg.text
+        p Hidden

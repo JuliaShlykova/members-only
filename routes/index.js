@@ -4,19 +4,33 @@ const {body, validationResult} = require('express-validator');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const User = require('../models/User');
+const Message = require('../models/Message');
+const {name_format} = require('../helper');
 
-const checkedLoggedIn = (req, res, next) => {
+const checkLoggedIn = (req, res, next) => {
   if(req.isAuthenticated()) {
     return res.redirect('/');
   }
   next();
 }
+
+const checkNotLoggedIn = (req, res, next) => {
+  if(!req.isAuthenticated()) {
+    return res.redirect('/');
+  }
+  next();
+}
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', {title: 'Members Only'});
+router.get('/', async function(req, res, next) {
+  try{
+    const messages = await Message.find({}).populate('user', 'first_name last_name').sort({timestamp: 1});
+    res.render('index', {title: 'Members Only', messages});
+  } catch(err) {
+    return next(err);
+  }
 });
 
-router.get('/sign-up', checkedLoggedIn, function(req, res, next) {
+router.get('/sign-up', checkLoggedIn, function(req, res, next) {
   res.render('signUp', {title: 'Sign Up'});
 })
 
@@ -89,8 +103,8 @@ router.post('/sign-up',
       }
       const hashedPsw = await bcrypt.hash(req.body.password, 10);
       const user = new User({
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
+        first_name: name_format(req.body.first_name),
+        last_name: name_format(req.body.last_name),
         email: req.body.email,
         password: hashedPsw
       });
@@ -104,13 +118,15 @@ router.post('/sign-up',
     }
 })
 
-router.get('/log-in', checkedLoggedIn, function(req, res, next) {
-  res.render('logIn', {title: 'Log In'});
+router.get('/log-in', checkLoggedIn, function(req, res, next) {
+  const errors = req.session.messages?[{msg: req.session.messages[req.session.messages.length-1]}]:undefined;
+  res.render('logIn', {title: 'Log In', errors});
 })
 
 router.post('/log-in',   passport.authenticate("local", {
   successRedirect: "/",
-  failureRedirect: "/log-in"
+  failureRedirect: "/log-in",
+  failureMessage: true
 }))
 
 router.get('/log-out', function(req, res, next) {
@@ -122,8 +138,69 @@ router.get('/log-out', function(req, res, next) {
   })
 })
 
-router.get('/new-post', function(req, res, next) {
-
+router.get('/join-club', checkNotLoggedIn, function(req, res, next) {
+  res.render('joinClub', {title: "Join Club"});
 })
+
+router.post('/join-club', async function(req, res, next) {
+  if(req.body.secret_code==='secret') {
+    try{
+      await User.findByIdAndUpdate(req.user.id, {membership: true});
+      return res.redirect('/');
+    } catch(err) {
+      return next(err);
+    }
+  }
+  return res.render('joinClub', {title: "Join Club", wrongWord: req.body.secret_code});;
+})
+
+router.get('/new-post', checkNotLoggedIn, function(req, res, next) {
+  return res.render('newPost', {title: 'New Post'});
+})
+
+router.post('/new-post', 
+  body('msg_title')
+    .trim()
+    .isLength({min: 1})
+    .escape()
+    .withMessage('title must be specified')
+    .isLength({max: 40})
+    .withMessage('title mustn\'t exceed 40 characters'),
+  body('msg_text')
+    .trim()
+    .isLength({min: 1})
+    .escape()
+    .withMessage('message must be specified')
+    .isLength({max: 1000})
+    .withMessage('message mustn\'t exceed 1000 characters'),
+  async function(req, res, next) {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+      return res.render('newPost', {
+        title: 'New Post',
+        message: {
+          title: req.body.msg_title,
+          text: req.body.msg_text
+        },
+        errors: errors.array()
+      })
+    }
+    if(!req.user) {
+      return res.redirect('/log-in');
+    }
+    const message = new Message({
+      user: req.user._id,
+      title: req.body.msg_title,
+      text: req.body.msg_text,
+      timestamp: Date.now()
+    })
+    try {
+      await message.save();
+      res.redirect('/');
+    } catch(err) {
+      return next(err);
+    }
+  }
+)
 
 module.exports = router;

@@ -43,11 +43,11 @@ passport.use(new LocalStrategy({usernameField: 'email'}, async(email, password, 
   try {
     const user = await User.findOne({email: email});
     if (!user) {
-      return done(null, false);
+      return done(null, false, {message: 'Incorrect email'});
     }
     const pswMatch = await bcrypt.compare(password, user.password);
     if (!pswMatch) {
-      return done(null, false);
+      return done(null, false, 'Incorrect password');
     }
     return done(null, user);
   } catch(err) {
@@ -68,7 +68,7 @@ passport.deserializeUser(async (id, done) => {
   }
 })
 
-app.use(session({secret: 'dogs', resave: false, saveUninitialized: true}));
+app.use(session({secret: 'dogs', resave: false, saveUninitialized: true, cookie: {maxAge: 24*60*60*1000}}));
 
 app.use(passport.initialize());
 app.use(passport.session());

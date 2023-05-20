@@ -1,6 +1,6 @@
-extends index 
+extends layout 
 
-block form 
+block content 
   div.container
     div.form-container
       p Don't have an account? 
@@ -11,4 +11,9 @@ block form
         label(for="password") Password: 
         input#password(type="password" value=(user===undefined)?"":user.password name="password" required=true)
         button(type="submit") Log In
+      if errors 
+        ul#errors 
+          for error in errors 
+            li 
+              p *#{error.msg}
       a(href='/') Cancel

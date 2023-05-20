@@ -46,10 +46,8 @@ table {
 :root {
   font-size: 20px;
   font-family: sans-serif;
-}
-
-p {
-  padding: 1rem 0;
+  --gold-color: #FFD700;
+  --black-color: #000000;
 }
 
 button {
@@ -67,7 +65,7 @@ nav {
   flex-direction: row;
   justify-content: space-between;
   padding: 1rem;
-  background-color: grey;
+  background-color: var(--black-color);
 }
 
 nav ul {
@@ -79,12 +77,19 @@ nav ul li {
   margin-left: 1rem;
 }
 
+nav div#logo p a{
+  color: var(--gold-color);
+}
+
 form {
+  width: 50vw;
+  max-width: 600px;
+  margin-top: 1rem;
   display: flex;
   flex-direction: column;
 }
 
-form input {
+form input, form textarea {
   margin-bottom: 1rem;
 }
 

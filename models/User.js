@@ -10,4 +10,4 @@ const UserSchema = new Schema({
   membership: {type: Boolean, default: false}
 })
 
-module.exports = mongoose.model('users', UserSchema);
+module.exports = mongoose.model('User', UserSchema);

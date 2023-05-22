@@ -4,6 +4,7 @@ html
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
+    div#highest
     nav 
       div#logo
         p 
@@ -13,6 +14,9 @@ html
           if !currentUser.membership
             li 
               a(href='/join-club') Join the club
+          else
+            if !currentUser.admin
+                a(href='/become-admin') Become an admin
           li 
             a(href='/new-post') New Post
           li

@@ -20,6 +20,13 @@ const checkNotLoggedIn = (req, res, next) => {
   }
   next();
 }
+
+const checkAdmin = (req, res, next) => {
+  if(!req.user.admin) {
+    return res.redirec('/');
+  }
+  next();
+}
 /* GET home page. */
 router.get('/', async function(req, res, next) {
   try{
@@ -143,7 +150,7 @@ router.get('/join-club', checkNotLoggedIn, function(req, res, next) {
 })
 
 router.post('/join-club', async function(req, res, next) {
-  if(req.body.secret_code==='secret') {
+  if(req.body.secret_code.toLowerCase()==='pseudocode') {
     try{
       await User.findByIdAndUpdate(req.user.id, {membership: true});
       return res.redirect('/');
@@ -202,5 +209,34 @@ router.post('/new-post',
     }
   }
 )
+
+router.get('/become-admin', checkNotLoggedIn, function(req, res, next) {
+  return res.render('becomeAdmin', {title: 'Become Admin'});
+})
+
+router.post('/become-admin', checkNotLoggedIn, async function(req, res, next) {
+  if(req.body.secret_code.toLowerCase()==='eleven'||req.body.secret_code==11) {
+    try{
+      await User.findByIdAndUpdate(req.user.id, {admin: true});
+      return res.redirect('/');
+    } catch(err) {
+      return next(err);
+    }
+  }
+  return res.render('becomeAdmin', {title: 'Become Admin', wrongWord: req.body.secret_code});;
+})
+
+router.get('/messages/:id/delete', checkNotLoggedIn, checkAdmin, function(req, res, next) {
+  return res.render('messageDelete', {title: 'Delete message', message: {id: req.params.id}});
+})
+
+router.post('/messages/:id/delete', checkNotLoggedIn, checkAdmin, async function(req, res, next) {
+  try {
+    await Message.findByIdAndRemove(req.body.messageid);
+    return res.redirect('/');
+  } catch(err) {
+    return next(err);
+  }
+})
 
 module.exports = router;

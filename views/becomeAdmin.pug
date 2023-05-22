@@ -2,11 +2,11 @@ extends layout
 
 block content 
   main
-    h1 Solve the Riddle and Join The Club! 
+    h1 Solve the Riddle and Become an admin! 
     if wrongWord 
       p #[strong #{wrongWord}] is not the answer!
     form.joining(method="POST" action="" autocomplete="off")
-      label(for="secret-code") I'm a language for everything yet I have no real identity of my own. Good luck trying to compile me. What am I? 
+      label(for="secret-code") Susan and Lisa decided to play tennis against each other. They bet $1 on each game they played. Susan won three bets and Lisa won $5. How many games did they play? 
       input#secret-code(type="text" value="" name="secret_code" required=true )
       button(type="submit") Submit
   a.github(href='https://github.com/JuliaShlykova/members-only') Answers are here!

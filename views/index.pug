@@ -1,23 +1,29 @@
 extends layout
 
 block content
-  h1 Messages 
-  if currentUser 
-    if currentUser.membership 
-      p Welcome back, dear member #{currentUser.first_name+' '+currentUser.last_name}!
-    else
-      p Welcome, #{currentUser.first_name+' '+currentUser.last_name}!
-  else 
-    p Welcome!
-  for msg in messages
-    div.message
-      if currentUser&&currentUser.membership 
-        p #{msg.user.first_name+' '+msg.user.last_name}
-        h2=msg.title
-        p=msg.text
-        p #{msg.format_timestamp}
+  main
+    h1 Messages 
+    if currentUser 
+      if currentUser.membership 
+        p Welcome back, dear member #{currentUser.first_name+' '+currentUser.last_name}! 
+          if currentUser.admin
+            span You have admin rights.
       else
-        p Hidden
-        h2=msg.title
-        p=msg.text
-        p Hidden
+        p Welcome, #{currentUser.first_name+' '+currentUser.last_name}!
+    else 
+      p Welcome!
+    for msg in messages
+      div.message
+        if currentUser&&currentUser.membership 
+          p.user-name #{msg.user.first_name+' '+msg.user.last_name}
+          p.message-title=msg.title
+          p.message-text=msg.text
+          p.timestamp #{msg.format_timestamp}
+          if currentUser.admin 
+            a(href=msg.url+'/delete') delete
+        else
+          p.user-name Hidden
+          p.message-title=msg.title
+          p.message-text=msg.text
+          p.timestamp Hidden
+    a.up(href='#highest')

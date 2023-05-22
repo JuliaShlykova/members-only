@@ -1,0 +1,10 @@
+extends layout 
+
+block content 
+  div.container
+    div.form-container
+      p Are you sure you want to delete the post? 
+      form(action="" method="POST")
+        input(type="hidden" value=message.id name="messageid" required=true)
+        button(type="submit") Yes 
+      a(href='/') No

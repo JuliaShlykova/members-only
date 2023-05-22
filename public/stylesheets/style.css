@@ -118,6 +118,7 @@ form {
 
 form input, form textarea {
   margin-bottom: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 form.joining label{
@@ -191,7 +192,7 @@ div.message p.message-title {
 }
 
 div.message p.timestamp {
-  font-size: 0.5rem;
+  font-size: 0.7rem;
   text-align: right;
 }
 
